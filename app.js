@@ -7,7 +7,7 @@
    ========================= */
 
 const OWNER = "BoniniSebastian";
-const REPO  = "v2soundboard";
+const REPO  = "SBsoundboardV3";
 
 const CATEGORIES = [
   { label: "SOUNDS",    folder: "sounds/tuta" },
