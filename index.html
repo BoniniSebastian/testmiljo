@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SB Soundboard V5</title>
+  <title>SB Soundboard V6</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,123 +13,142 @@
     <span></span><span></span><span></span><span></span><span></span><span></span>
     <span></span><span></span><span></span><span></span><span></span><span></span>
     <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
   <div class="appShell">
-    <aside class="controlPanel">
-      <div class="panelTop">
-        <button id="resetBtn" class="resetBtn glass" type="button" title="Nollställ preload och favoriter">
-          Nollställ
-        </button>
+    <header class="soundsBar glass">
+      <div class="soundsBarHead">
+        <div class="soundsBarTitle">SOUNDS</div>
+        <button id="soundsRandomBtn" class="miniActionBtn" type="button">▶ Random (S)</button>
       </div>
+      <div id="soundsList" class="soundsList">
+        <div class="emptyState">Laddar sounds...</div>
+      </div>
+    </header>
 
-      <div class="playerCard glass">
-        <div class="ambientGlow"></div>
-
-        <div class="playerHeader">
-          <div>
-            <div class="tinyLabel">Aktuell låt</div>
-            <div id="nowPlayingTitle" class="nowPlayingTitle">Ingen låt vald</div>
-          </div>
-          <div id="playerStatePill" class="playerStatePill">Idle</div>
-        </div>
-
-        <div class="playerVisualizerWrap">
-          <div id="visualizer" class="visualizer ambient">
-            <span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span>
-          </div>
-        </div>
-
-        <div class="playerCircleWrap">
-          <button id="centerPlayPauseBtn" class="playerCircle glass" type="button" aria-label="Play eller pausa">
-            <div class="playerCircleRing"></div>
-            <div class="playerCircleInner">
-              <div class="circleTop">NU SPELAS</div>
-              <div id="circleTime" class="circleTime">--:--</div>
-              <div id="circleMeta" class="circleMeta">Välj en låt</div>
-              <div id="circleIcon" class="circleIcon">▶</div>
+    <main class="mainGrid">
+      <section class="leftColumn">
+        <section id="utvisningSection" class="librarySection glass sectionCompact">
+          <div class="sectionHeader">
+            <div class="sectionTitleWrap">
+              <div class="sectionMiniTitle">utvisning</div>
+              <div class="sectionTitle">UTVISNING</div>
             </div>
-          </button>
-        </div>
+            <div class="sectionActions">
+              <button id="utvisningRandomBtn" class="sectionActionBtn primary" type="button">▶ Random (U)</button>
+            </div>
+          </div>
+          <div id="utvisningList" class="trackList">
+            <div class="emptyState">Laddar utvisning...</div>
+          </div>
+        </section>
 
-        <div class="playerActions">
-          <button id="resumeBtn" class="actionBtn glass" type="button">▶ Spela</button>
-          <button id="pauseBtn" class="actionBtn glass" type="button">❚❚ Pausa</button>
-          <button id="stopBtn" class="actionBtn glass dangerSoft" type="button">■ Stop</button>
-        </div>
-      </div>
+        <section id="malSection" class="librarySection glass sectionCompact">
+          <div class="sectionHeader">
+            <div class="sectionTitleWrap">
+              <div class="sectionMiniTitle">mal</div>
+              <div class="sectionTitle">MÅL</div>
+            </div>
+            <div class="sectionActions">
+              <button id="malRandomBtn" class="sectionActionBtn primary" type="button">▶ Random (M)</button>
+            </div>
+          </div>
+          <div id="malList" class="trackList">
+            <div class="emptyState">Laddar mål...</div>
+          </div>
+        </section>
+      </section>
 
-      <div class="goalArea glass">
-        <div class="sectionMiniTitle">Matchsnabbisar</div>
+      <section class="rightColumn">
+        <section id="avbrottSection" class="librarySection glass sectionTall">
+          <div class="sectionHeader">
+            <div class="sectionTitleWrap">
+              <div class="sectionMiniTitle">avbrott</div>
+              <div class="sectionTitle">AVBROTT</div>
+            </div>
+            <div class="sectionActions">
+              <button id="avbrottRandomBtn" class="sectionActionBtn primary" type="button">▶ Random (A)</button>
+            </div>
+          </div>
+          <div id="avbrottList" class="trackList avbrottList">
+            <div class="emptyState">Laddar avbrott...</div>
+          </div>
+        </section>
+      </section>
+    </main>
 
-        <div class="goalButtons">
-          <button id="goalHornBtn" class="goalRound goalHornRound" type="button">
-            <span class="goalRoundInner">
-              <span class="goalRoundTitle">GOAL HORN</span>
-              <span class="goalRoundMeta">Direkt tuta</span>
-            </span>
-          </button>
+    <section class="bottomStage">
+      <div class="goalDock glass">
+        <button id="goalHornBtn" class="goalRound goalHornRound" type="button">
+          <span class="goalRoundInner">
+            <span class="goalRoundTitle">GOAL HORN</span>
+            <span class="goalRoundMeta">Direkt tuta (G)</span>
+          </span>
+        </button>
 
+        <div class="preloadDock glassInner">
           <button id="goalComboBtn" class="goalRound goalComboRound" type="button">
             <span class="goalRoundInner">
               <span class="goalRoundTitle">GOAL COMBO</span>
-              <span class="goalRoundMeta">Tuta + preload</span>
+              <span class="goalRoundMeta">Tuta + förladdad låt (C)</span>
             </span>
           </button>
-        </div>
 
-        <div class="preloadCard glassInner">
-          <div class="preloadHeader">
-            <div>
-              <div class="tinyLabel">Förladdad låt</div>
-              <div id="preloadTitle" class="preloadTitle">Ingen låt laddad</div>
+          <div class="preloadInline">
+            <div class="tinyLabel">Förladdad låt</div>
+            <div id="preloadTitle" class="preloadInlineTitle">Ingen låt laddad</div>
+            <div class="preloadInlineMetaRow">
+              <div id="preloadBadge" class="preloadBadge">Tom</div>
+              <button id="clearPreloadBtn" class="miniActionBtn subtleBtn" type="button">Rensa</button>
             </div>
-            <div id="preloadBadge" class="preloadBadge">Tom</div>
-          </div>
-
-          <div class="preloadHint">
-            Tryck <strong>+</strong> på en låt för att ladda den här.
           </div>
         </div>
       </div>
 
-      <div class="soundsPanel glass">
-        <div class="sectionMiniTitle">Sounds</div>
-        <div class="soundsPanelBody">
-          <div class="soundsPanelTop">
-            <div class="soundsPanelTitle">Direktljud</div>
-            <button id="soundsRandomBtn" class="sectionActionBtn primary" type="button">▶ Random (S)</button>
+      <section class="wheelStage">
+        <button id="centerPlayPauseBtn" class="playerWheel" type="button" aria-label="Play eller pausa">
+          <div class="playerWheelNeon"></div>
+          <div class="playerWheelInner">
+            <div class="wheelTopRow">
+              <div class="tinyLabel">Spelas nu</div>
+              <div id="playerStatePill" class="playerStatePill">Idle</div>
+            </div>
+
+            <div id="nowPlayingTitle" class="nowPlayingTitle">Ingen låt vald</div>
+
+            <div class="wheelVisualizerWrap">
+              <div id="visualizer" class="visualizer ambient">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div id="circleTime" class="circleTime">--:--</div>
+            <div id="circleMeta" class="circleMeta">Välj en låt</div>
+            <div id="circleIcon" class="circleIcon">▶</div>
           </div>
-          <div id="soundsList" class="soundsList">
-            <div class="emptyState">Laddar sounds...</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+        </button>
 
-    <main class="libraryPanel">
-      <div class="libraryTop glass">
-        <div>
-          <div class="libraryEyebrow">Ljudbibliotek</div>
-          <div class="libraryTitle">Spela direkt eller förladda</div>
+        <div class="wheelActions">
+          <button id="resumeBtn" class="actionBtn glass" type="button">▶ Spela</button>
+          <button id="pauseBtn" class="actionBtn glass" type="button">❚❚ Pausa</button>
+          <button id="stopBtn" class="actionBtn glass dangerSoft" type="button">■ Stop</button>
+          <button id="resetBtn" class="actionBtn glass" type="button">Nollställ</button>
         </div>
+      </section>
+    </section>
 
-        <div class="shortcutLegend">
-          <span class="legendChip">G goal horn</span>
-          <span class="legendChip">C combo</span>
-          <span class="legendChip">A avbrott random</span>
-          <span class="legendChip">U utvisning random</span>
-          <span class="legendChip">M mål random</span>
-          <span class="legendChip">S sounds random</span>
-          <span class="legendChip">Space play/pause</span>
-          <span class="legendChip">Esc stop</span>
-        </div>
-      </div>
-
-      <div id="libraryGrid" class="libraryGrid"></div>
-    </main>
+    <footer class="shortcutFooter glass">
+      <span class="legendChip">G goal horn</span>
+      <span class="legendChip">C combo</span>
+      <span class="legendChip">A avbrott random</span>
+      <span class="legendChip">U utvisning random</span>
+      <span class="legendChip">M mål random</span>
+      <span class="legendChip">S sounds random</span>
+      <span class="legendChip">Space play/pause</span>
+      <span class="legendChip">Esc stop</span>
+    </footer>
   </div>
 
   <script src="app.js"></script>
