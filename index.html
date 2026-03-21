@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SB Soundboard V4</title>
+  <title>SB Soundboard V5</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="bgEq" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
   <div class="appShell">
     <aside class="controlPanel">
       <div class="panelTop">
-        <div class="brandBlock glass">
-          <div class="brandEyebrow">SB SOUNDBOARD</div>
-          <div class="brandTitle">Arena Controller</div>
-        </div>
-
         <button id="resetBtn" class="resetBtn glass" type="button" title="Nollställ preload och favoriter">
           Nollställ
         </button>
@@ -62,14 +65,18 @@
         <div class="sectionMiniTitle">Matchsnabbisar</div>
 
         <div class="goalButtons">
-          <button id="goalHornBtn" class="heroBtn heroRed" type="button">
-            <span class="heroBtnTitle">📣 GOAL HORN</span>
-            <span class="heroBtnMeta">Direkt tuta (G)</span>
+          <button id="goalHornBtn" class="goalRound goalHornRound" type="button">
+            <span class="goalRoundInner">
+              <span class="goalRoundTitle">GOAL HORN</span>
+              <span class="goalRoundMeta">Direkt tuta</span>
+            </span>
           </button>
 
-          <button id="goalComboBtn" class="heroBtn heroPink" type="button">
-            <span class="heroBtnTitle">🚀 GOAL COMBO</span>
-            <span class="heroBtnMeta">Tuta + preload efter delay (C)</span>
+          <button id="goalComboBtn" class="goalRound goalComboRound" type="button">
+            <span class="goalRoundInner">
+              <span class="goalRoundTitle">GOAL COMBO</span>
+              <span class="goalRoundMeta">Tuta + preload</span>
+            </span>
           </button>
         </div>
 
@@ -83,24 +90,21 @@
           </div>
 
           <div class="preloadHint">
-            Tryck <strong>+</strong> på en låt i biblioteket för att ladda den här.
+            Tryck <strong>+</strong> på en låt för att ladda den här.
           </div>
         </div>
       </div>
 
-      <div class="spotifyCard glass">
-        <div class="sectionMiniTitle">Spotify</div>
-        <div class="spotifyWrap">
-          <iframe
-            id="spotifyPlayer"
-            style="border-radius:18px"
-            src="https://open.spotify.com/embed/playlist/6Fd88J4EpeC0zq9omsY08T?utm_source=generator&theme=0"
-            width="100%"
-            height="352"
-            frameborder="0"
-            allowfullscreen=""
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-          </iframe>
+      <div class="soundsPanel glass">
+        <div class="sectionMiniTitle">Sounds</div>
+        <div class="soundsPanelBody">
+          <div class="soundsPanelTop">
+            <div class="soundsPanelTitle">Direktljud</div>
+            <button id="soundsRandomBtn" class="sectionActionBtn primary" type="button">▶ Random (S)</button>
+          </div>
+          <div id="soundsList" class="soundsList">
+            <div class="emptyState">Laddar sounds...</div>
+          </div>
         </div>
       </div>
     </aside>
@@ -118,6 +122,7 @@
           <span class="legendChip">A avbrott random</span>
           <span class="legendChip">U utvisning random</span>
           <span class="legendChip">M mål random</span>
+          <span class="legendChip">S sounds random</span>
           <span class="legendChip">Space play/pause</span>
           <span class="legendChip">Esc stop</span>
         </div>
