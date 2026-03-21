@@ -4,19 +4,18 @@ const REPO = "SBsoundboardV3";
 const GOAL_COMBO_DELAY_MS = 1200;
 const PLAY_FADE_IN_MS = 150;
 const PAUSE_FADE_OUT_MS = 700;
-const STOP_FADE_OUT_MS = 700;
+const STOP_FADE_OUT_MS = 340;
 
 const STORAGE_KEYS = {
-  preload: "sb_v4_preload_track",
-  favorites: "sb_v4_avbrott_favorites"
+  preload: "sb_v5_preload_track",
+  favorites: "sb_v5_avbrott_favorites"
 };
 
-const CATEGORIES = [
+const MAIN_CATEGORIES = [
   {
     key: "mal",
     label: "MÅL",
     folder: "sounds/mal",
-    type: "music",
     allowRandom: true,
     allowLoad: true,
     allowFavorite: false,
@@ -26,7 +25,6 @@ const CATEGORIES = [
     key: "avbrott",
     label: "AVBROTT",
     folder: "sounds/avbrott",
-    type: "music",
     allowRandom: true,
     allowLoad: true,
     allowFavorite: true,
@@ -36,13 +34,22 @@ const CATEGORIES = [
     key: "utvisning",
     label: "UTVISNING",
     folder: "sounds/utvisning",
-    type: "music",
     allowRandom: true,
     allowLoad: true,
     allowFavorite: false,
     shortcut: "U"
   }
 ];
+
+const SOUNDS_CATEGORY = {
+  key: "tuta",
+  label: "SOUNDS",
+  folder: "sounds/tuta",
+  allowRandom: true,
+  allowLoad: true,
+  allowFavorite: false,
+  shortcut: "S"
+};
 
 const AUDIO_EXT = ["mp3", "m4a", "wav", "ogg", "aac"];
 
@@ -56,10 +63,14 @@ const state = {
   musicFadeRaf: null,
   hornAudios: [],
   comboTimeout: null,
-  uiInterval: null
+  uiInterval: null,
+  goalHornCache: null
 };
 
 const libraryGrid = document.getElementById("libraryGrid");
+const soundsList = document.getElementById("soundsList");
+const soundsRandomBtn = document.getElementById("soundsRandomBtn");
+
 const nowPlayingTitle = document.getElementById("nowPlayingTitle");
 const circleTime = document.getElementById("circleTime");
 const circleMeta = document.getElementById("circleMeta");
@@ -85,6 +96,7 @@ async function init() {
   buildSkeletonSections();
   await loadAllFolders();
   renderAllSections();
+  renderSoundsSection();
   renderPreload();
   syncPlayerUI();
   startUiTicker();
@@ -127,7 +139,7 @@ function persistFavorites() {
 function buildSkeletonSections() {
   libraryGrid.innerHTML = "";
 
-  for (const cat of CATEGORIES) {
+  for (const cat of MAIN_CATEGORIES) {
     const section = document.createElement("section");
     section.className = "librarySection glass";
     section.dataset.key = cat.key;
@@ -137,7 +149,6 @@ function buildSkeletonSections() {
         <div>
           <div class="sectionMiniTitle">${escapeHtml(cat.folder.replace("sounds/", ""))}</div>
           <div class="sectionTitle">${escapeHtml(cat.label)}</div>
-          <div class="sectionSubtitle">Klicka på en låt för att spela direkt.</div>
         </div>
         <div class="sectionActions" data-actions="${escapeHtml(cat.key)}"></div>
       </div>
@@ -152,7 +163,9 @@ function buildSkeletonSections() {
 }
 
 async function loadAllFolders() {
-  await Promise.all(CATEGORIES.map(cat => loadFolder(cat)));
+  const all = [...MAIN_CATEGORIES, SOUNDS_CATEGORY];
+  await Promise.all(all.map(cat => loadFolder(cat)));
+  await loadGoalHornCache();
 }
 
 async function loadFolder(category) {
@@ -183,8 +196,26 @@ async function loadFolder(category) {
   }
 }
 
+async function loadGoalHornCache() {
+  const apiFolder = "sounds/goalhorn";
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${apiFolder}?t=${Date.now()}`;
+
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return;
+    const items = await res.json();
+    const files = (items || []).filter(item => item?.type === "file" && isAudio(item.name));
+    if (!files.length) return;
+
+    state.goalHornCache = {
+      name: pretty(files[0].name),
+      url: files[0].download_url
+    };
+  } catch {}
+}
+
 function renderAllSections() {
-  for (const category of CATEGORIES) {
+  for (const category of MAIN_CATEGORIES) {
     renderSection(category);
   }
   markPlayingCards();
@@ -222,63 +253,77 @@ function renderSection(category) {
   }
 
   listWrap.innerHTML = "";
-
   for (const file of ordered) {
-    const card = document.createElement("div");
-    card.className = "trackCard";
-    card.dataset.trackId = file.id;
-
-    const mainBtn = document.createElement("button");
-    mainBtn.type = "button";
-    mainBtn.className = "trackMain";
-    mainBtn.onclick = () => playTrack(file, { fadeIn: true });
-
-    const metaLabel =
-      file.categoryKey === "avbrott"
-        ? "Pausa / spela vidare via cirkeln"
-        : "Klick = spela direkt";
-
-    mainBtn.innerHTML = `
-      <div class="trackName">${escapeHtml(file.name)}</div>
-      <div class="trackMeta">${escapeHtml(metaLabel)}</div>
-    `;
-
-    const actions = document.createElement("div");
-    actions.className = "trackActions";
-
-    if (category.allowLoad) {
-      const loadBtn = document.createElement("button");
-      loadBtn.type = "button";
-      loadBtn.className = "trackLoadBtn";
-      loadBtn.title = "Ladda till preload";
-      loadBtn.textContent = "+";
-      loadBtn.onclick = (e) => {
-        e.stopPropagation();
-        setPreload(file);
-      };
-      actions.appendChild(loadBtn);
-    }
-
-    if (category.allowFavorite) {
-      const favBtn = document.createElement("button");
-      favBtn.type = "button";
-      favBtn.className = "trackFavBtn";
-      favBtn.title = "Favoritmarkera";
-      favBtn.textContent = "★";
-      if (state.avbrottFavorites.has(file.id)) {
-        favBtn.classList.add("active");
-      }
-      favBtn.onclick = (e) => {
-        e.stopPropagation();
-        toggleFavorite(file);
-      };
-      actions.appendChild(favBtn);
-    }
-
-    card.appendChild(mainBtn);
-    card.appendChild(actions);
-    listWrap.appendChild(card);
+    listWrap.appendChild(createTrackCard(file, category.allowLoad, category.allowFavorite));
   }
+}
+
+function renderSoundsSection() {
+  const files = [...(state.library.get("tuta") || [])];
+  soundsList.innerHTML = "";
+
+  if (!files.length) {
+    soundsList.innerHTML = `<div class="emptyState">Inga sounds hittades.</div>`;
+    return;
+  }
+
+  for (const file of files) {
+    soundsList.appendChild(createTrackCard(file, true, false));
+  }
+
+  markPlayingCards();
+}
+
+function createTrackCard(file, allowLoad, allowFavorite) {
+  const card = document.createElement("div");
+  card.className = "trackCard";
+  if (allowFavorite) card.classList.add("has-fav");
+  card.dataset.trackId = file.id;
+
+  const playBtn = document.createElement("button");
+  playBtn.type = "button";
+  playBtn.className = "trackPlayBtn";
+  playBtn.onclick = () => playTrack(file, { fadeIn: true });
+  playBtn.innerHTML = `
+    <div class="trackName">${escapeHtml(file.name)}</div>
+  `;
+
+  const actions = document.createElement("div");
+  actions.className = "trackActions";
+
+  if (allowLoad) {
+    const loadBtn = document.createElement("button");
+    loadBtn.type = "button";
+    loadBtn.className = "trackLoadBtn";
+    loadBtn.title = "Ladda till preload";
+    loadBtn.textContent = "+";
+    loadBtn.onclick = (e) => {
+      e.stopPropagation();
+      setPreload(file);
+    };
+    actions.appendChild(loadBtn);
+  }
+
+  if (allowFavorite) {
+    const favBtn = document.createElement("button");
+    favBtn.type = "button";
+    favBtn.className = "trackFavBtn";
+    favBtn.title = "Favoritmarkera";
+    favBtn.textContent = "★";
+    if (state.avbrottFavorites.has(file.id)) {
+      favBtn.classList.add("active");
+    }
+    favBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleFavorite(file);
+    };
+    actions.appendChild(favBtn);
+  }
+
+  card.appendChild(playBtn);
+  if (actions.childElementCount) card.appendChild(actions);
+
+  return card;
 }
 
 function markPlayingCards() {
@@ -288,8 +333,8 @@ function markPlayingCards() {
 
   if (!state.musicTrack) return;
 
-  const active = document.querySelector(`.trackCard[data-track-id="${cssEscape(state.musicTrack.id)}"]`);
-  if (active) active.classList.add("playing");
+  const all = document.querySelectorAll(`.trackCard[data-track-id="${cssEscape(state.musicTrack.id)}"]`);
+  all.forEach(el => el.classList.add("playing"));
 }
 
 function renderPreload() {
@@ -313,6 +358,7 @@ function bindControls() {
   goalHornBtn.onclick = () => playGoalHorn();
   goalComboBtn.onclick = () => playGoalCombo();
   resetBtn.onclick = () => resetStoredState();
+  soundsRandomBtn.onclick = () => playRandomFromCategory("tuta");
 
   document.addEventListener("keydown", (e) => {
     const key = e.key.toLowerCase();
@@ -322,62 +368,43 @@ function bindControls() {
       toggleMusicPauseResume();
       return;
     }
-
     if (key === "escape") {
       stopAll();
       return;
     }
-
     if (key === "g") {
       playGoalHorn();
       return;
     }
-
     if (key === "c") {
       playGoalCombo();
       return;
     }
-
     if (key === "a") {
       playRandomFromCategory("avbrott");
       return;
     }
-
     if (key === "u") {
       playRandomFromCategory("utvisning");
       return;
     }
-
     if (key === "m") {
       playRandomFromCategory("mal");
+      return;
+    }
+    if (key === "s") {
+      playRandomFromCategory("tuta");
     }
   });
 }
 
-function getGoalHornTrack() {
-  const apiFolder = "sounds/goalhorn";
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${apiFolder}?t=${Date.now()}`;
-  return fetch(url, { cache: "no-store" })
-    .then(res => res.ok ? res.json() : [])
-    .then(items => {
-      const files = (items || []).filter(item => item?.type === "file" && isAudio(item.name));
-      if (!files.length) return null;
-      return {
-        name: pretty(files[0].name),
-        url: files[0].download_url
-      };
-    })
-    .catch(() => null);
-}
-
-async function playGoalHorn() {
-  const track = await getGoalHornTrack();
-  if (!track) {
+function playGoalHorn() {
+  if (!state.goalHornCache?.url) {
     alert('Ingen goalhorn-fil hittades i "sounds/goalhorn".');
     return;
   }
 
-  const audio = new Audio(track.url);
+  const audio = new Audio(state.goalHornCache.url);
   audio.preload = "auto";
   state.hornAudios.push(audio);
 
@@ -388,13 +415,13 @@ async function playGoalHorn() {
   };
 }
 
-async function playGoalCombo() {
+function playGoalCombo() {
   if (!state.preloadTrack) {
     playGoalHorn();
     return;
   }
 
-  await playGoalHorn();
+  playGoalHorn();
 
   clearTimeout(state.comboTimeout);
   state.comboTimeout = setTimeout(() => {
@@ -422,7 +449,7 @@ function toggleFavorite(track) {
     state.avbrottFavorites.add(track.id);
   }
   persistFavorites();
-  renderSection(CATEGORIES.find(cat => cat.key === "avbrott"));
+  renderSection(MAIN_CATEGORIES.find(cat => cat.key === "avbrott"));
   markPlayingCards();
 }
 
@@ -548,7 +575,7 @@ function resetStoredState() {
   persistPreload();
   persistFavorites();
   renderPreload();
-  renderSection(CATEGORIES.find(cat => cat.key === "avbrott"));
+  renderSection(MAIN_CATEGORIES.find(cat => cat.key === "avbrott"));
   markPlayingCards();
 }
 
