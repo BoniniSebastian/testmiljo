@@ -7,7 +7,6 @@
   --glassLine:rgba(255,255,255,.14);
   --text:#f5f8ff;
   --muted:rgba(255,255,255,.66);
-  --soft:rgba(255,255,255,.08);
 
   --pink:#ff4f9a;
   --pink2:#ff7fbe;
@@ -20,13 +19,9 @@
   --shadow-lg:0 30px 80px rgba(0,0,0,.38);
   --shadow-md:0 16px 40px rgba(0,0,0,.28);
   --blur:18px;
-  --radius-xl:28px;
-  --radius-lg:22px;
-  --radius-md:16px;
 
   --leftCol: 420px;
-  --libraryGap: 18px;
-  --sectionMaxH: 420px;
+  --sectionMaxH: 430px;
 }
 
 *{ box-sizing:border-box; }
@@ -35,9 +30,9 @@ html,body{
   margin:0;
   min-height:100%;
   background:
-    radial-gradient(circle at 12% 10%, rgba(73,217,255,.18), transparent 24%),
-    radial-gradient(circle at 88% 12%, rgba(255,79,154,.16), transparent 24%),
-    radial-gradient(circle at 50% 90%, rgba(255,140,74,.12), transparent 24%),
+    radial-gradient(circle at 12% 10%, rgba(73,217,255,.16), transparent 24%),
+    radial-gradient(circle at 88% 12%, rgba(255,79,154,.13), transparent 24%),
+    radial-gradient(circle at 50% 90%, rgba(255,140,74,.10), transparent 24%),
     linear-gradient(180deg, #09111b 0%, #060b12 40%, #03060b 100%);
   color:var(--text);
   font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -49,25 +44,11 @@ body::before{
   position:fixed;
   inset:-20%;
   background:
-    radial-gradient(circle at 30% 30%, rgba(73,217,255,.10), transparent 18%),
-    radial-gradient(circle at 75% 20%, rgba(255,79,154,.10), transparent 18%),
-    radial-gradient(circle at 60% 75%, rgba(255,140,74,.08), transparent 20%);
+    radial-gradient(circle at 30% 30%, rgba(73,217,255,.09), transparent 18%),
+    radial-gradient(circle at 75% 20%, rgba(255,79,154,.08), transparent 18%),
+    radial-gradient(circle at 60% 75%, rgba(255,140,74,.06), transparent 20%);
   filter:blur(60px);
   animation:bgFloat 14s ease-in-out infinite alternate;
-  pointer-events:none;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-  background-size:40px 40px;
-  mask-image:radial-gradient(circle at center, black 18%, transparent 85%);
-  -webkit-mask-image:radial-gradient(circle at center, black 18%, transparent 85%);
-  opacity:.22;
   pointer-events:none;
 }
 
@@ -162,12 +143,6 @@ button{
   letter-spacing:-.03em;
 }
 
-.brandMeta{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:13px;
-}
-
 .resetBtn{
   align-self:start;
   border-radius:18px;
@@ -197,16 +172,16 @@ button{
   inset:auto -10% -20% -10%;
   height:220px;
   background:
-    radial-gradient(circle at 35% 40%, rgba(73,217,255,.22), transparent 36%),
-    radial-gradient(circle at 65% 55%, rgba(255,79,154,.20), transparent 34%);
+    radial-gradient(circle at 35% 40%, rgba(73,217,255,.18), transparent 36%),
+    radial-gradient(circle at 65% 55%, rgba(255,79,154,.15), transparent 34%);
   filter:blur(30px);
   pointer-events:none;
   animation:ambientPulse 6s ease-in-out infinite alternate;
 }
 
 @keyframes ambientPulse{
-  0%{ transform:scale(1) translateY(0); opacity:.8; }
-  100%{ transform:scale(1.08) translateY(-6px); opacity:1; }
+  0%{ transform:scale(1) translateY(0); opacity:.72; }
+  100%{ transform:scale(1.08) translateY(-6px); opacity:.95; }
 }
 
 .playerHeader{
@@ -238,15 +213,14 @@ button{
 
 .playerStatePill.playing{
   color:#fff;
-  background:rgba(87,243,161,.16);
-  border-color:rgba(87,243,161,.32);
-  box-shadow:0 0 28px rgba(87,243,161,.18);
+  background:rgba(87,243,161,.14);
+  border-color:rgba(87,243,161,.24);
 }
 
 .playerStatePill.paused{
   color:#fff;
-  background:rgba(255,140,74,.16);
-  border-color:rgba(255,140,74,.32);
+  background:rgba(255,140,74,.14);
+  border-color:rgba(255,140,74,.24);
 }
 
 .playerVisualizerWrap{
@@ -270,11 +244,11 @@ button{
   border-radius:999px;
   background:linear-gradient(180deg, var(--cyan2), var(--pink));
   box-shadow:
-    0 0 16px rgba(73,217,255,.24),
-    0 0 18px rgba(255,79,154,.16);
+    0 0 12px rgba(73,217,255,.16),
+    0 0 12px rgba(255,79,154,.10);
   transform-origin:bottom center;
   animation:barAmbient 1.8s ease-in-out infinite;
-  opacity:.8;
+  opacity:.78;
 }
 
 .visualizer span:nth-child(1){ height:28px; animation-delay:.05s; }
@@ -301,13 +275,13 @@ button{
 }
 
 @keyframes barAmbient{
-  0%,100%{ transform:scaleY(.55); opacity:.55; }
-  50%{ transform:scaleY(1.08); opacity:.9; }
+  0%,100%{ transform:scaleY(.55); opacity:.5; }
+  50%{ transform:scaleY(1.02); opacity:.82; }
 }
 
 @keyframes barActive{
-  0%,100%{ transform:scaleY(.4); opacity:.8; }
-  50%{ transform:scaleY(1.3); opacity:1; }
+  0%,100%{ transform:scaleY(.4); opacity:.78; }
+  50%{ transform:scaleY(1.24); opacity:1; }
 }
 
 .playerCircleWrap{
@@ -317,23 +291,65 @@ button{
 }
 
 .playerCircle{
+  position:relative;
   width:238px;
   aspect-ratio:1;
   border-radius:50%;
   padding:14px;
   background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), rgba(255,255,255,.05) 34%, rgba(255,255,255,.02) 60%),
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.16), rgba(255,255,255,.05) 34%, rgba(255,255,255,.02) 60%),
     linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.04));
   border:1px solid rgba(255,255,255,.16);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 1px 0 rgba(255,255,255,.16),
     0 0 0 2px rgba(255,255,255,.03),
-    0 0 42px rgba(73,217,255,.18),
-    0 0 58px rgba(255,79,154,.14),
     var(--shadow-md);
+  overflow:visible;
+}
+
+.playerCircleRing{
+  position:absolute;
+  inset:-8px;
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  transform:scale(.985);
+  transition:opacity .25s ease, transform .25s ease;
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(73,217,255,.16),
+      rgba(255,79,154,.12),
+      rgba(255,255,255,.04),
+      rgba(73,217,255,.16)
+    );
+  filter:blur(10px);
+}
+
+.playerCircle.playing .playerCircleRing{
+  opacity:.72;
+  transform:scale(1);
+  animation:ringDrift 6s linear infinite, ringPulseSoft 2.6s ease-in-out infinite;
+}
+
+.playerCircle.paused .playerCircleRing{
+  opacity:.34;
+  transform:scale(1);
+}
+
+@keyframes ringDrift{
+  from{ transform:scale(1) rotate(0deg); }
+  to{ transform:scale(1) rotate(360deg); }
+}
+
+@keyframes ringPulseSoft{
+  0%,100%{ filter:blur(10px); opacity:.62; }
+  50%{ filter:blur(12px); opacity:.78; }
 }
 
 .playerCircleInner{
+  position:relative;
+  z-index:2;
   width:100%;
   height:100%;
   border-radius:50%;
@@ -343,8 +359,8 @@ button{
   align-items:center;
   gap:8px;
   background:
-    radial-gradient(circle at 50% 35%, rgba(255,255,255,.10), rgba(255,255,255,.03) 55%, transparent 70%),
-    rgba(7,12,20,.68);
+    radial-gradient(circle at 50% 35%, rgba(255,255,255,.09), rgba(255,255,255,.03) 55%, transparent 70%),
+    rgba(7,12,20,.72);
   border:1px solid rgba(255,255,255,.10);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
   text-align:center;
@@ -436,14 +452,14 @@ button{
 
 .heroRed{
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,.20), transparent 30%),
-    linear-gradient(180deg, rgba(255,99,115,.92), rgba(207,34,76,.92));
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(180deg, rgba(255,99,115,.90), rgba(207,34,76,.88));
 }
 
 .heroPink{
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 30%),
-    linear-gradient(180deg, rgba(255,109,189,.95), rgba(180,34,111,.92));
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.15), transparent 30%),
+    linear-gradient(180deg, rgba(255,109,189,.92), rgba(180,34,111,.90));
 }
 
 .preloadCard{
@@ -478,9 +494,8 @@ button{
 
 .preloadBadge.ready{
   color:#fff;
-  background:rgba(73,217,255,.16);
-  border-color:rgba(73,217,255,.34);
-  box-shadow:0 0 20px rgba(73,217,255,.15);
+  background:rgba(73,217,255,.14);
+  border-color:rgba(73,217,255,.26);
 }
 
 .preloadHint{
@@ -548,21 +563,28 @@ button{
 .libraryGrid{
   min-height:0;
   display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-areas:
+    "mal avbrott"
+    "utvisning avbrott";
   gap:18px;
-  align-content:start;
   overflow:auto;
   padding-right:2px;
+  align-content:start;
 }
 
 .librarySection{
   border-radius:28px;
-  padding:16px;
+  padding:14px;
   min-height:0;
   display:grid;
   grid-template-rows:auto auto 1fr;
-  gap:14px;
+  gap:12px;
 }
+
+.librarySection[data-key="mal"]{ grid-area:mal; }
+.librarySection[data-key="utvisning"]{ grid-area:utvisning; }
+.librarySection[data-key="avbrott"]{ grid-area:avbrott; }
 
 .sectionHeader{
   display:flex;
@@ -572,7 +594,7 @@ button{
 }
 
 .sectionTitle{
-  font-size:30px;
+  font-size:28px;
   font-weight:900;
   letter-spacing:-.03em;
   line-height:1;
@@ -593,7 +615,7 @@ button{
 
 .sectionActionBtn{
   border-radius:16px;
-  padding:11px 14px;
+  padding:10px 13px;
   background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.09);
   font-size:13px;
@@ -601,8 +623,8 @@ button{
 }
 
 .sectionActionBtn.primary{
-  background:linear-gradient(180deg, rgba(73,217,255,.22), rgba(73,217,255,.12));
-  border-color:rgba(73,217,255,.28);
+  background:linear-gradient(180deg, rgba(73,217,255,.18), rgba(73,217,255,.10));
+  border-color:rgba(73,217,255,.22);
 }
 
 .trackList{
@@ -610,32 +632,40 @@ button{
   max-height:var(--sectionMaxH);
   overflow:auto;
   display:grid;
-  gap:10px;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:8px;
   padding-right:4px;
+}
+
+.librarySection[data-key="avbrott"] .trackList{
+  max-height:none;
+  height:100%;
+  align-content:start;
 }
 
 .trackCard{
   display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-  align-items:center;
-  border-radius:18px;
-  padding:12px;
+  grid-template-rows:1fr auto;
+  gap:8px;
+  align-items:stretch;
+  border-radius:15px;
+  padding:10px;
+  min-height:96px;
   background:
     linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
   border:1px solid rgba(255,255,255,.08);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.05),
-    0 10px 26px rgba(0,0,0,.18);
+    0 10px 22px rgba(0,0,0,.16);
 }
 
 .trackCard.playing{
-  border-color:rgba(255,79,154,.34);
+  border-color:rgba(255,79,154,.24);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.06),
-    0 0 0 1px rgba(255,79,154,.16),
-    0 0 28px rgba(255,79,154,.18),
-    0 10px 26px rgba(0,0,0,.18);
+    0 0 0 1px rgba(255,79,154,.10),
+    0 0 18px rgba(255,79,154,.12),
+    0 10px 22px rgba(0,0,0,.16);
 }
 
 .trackMain{
@@ -646,7 +676,7 @@ button{
 }
 
 .trackName{
-  font-size:15px;
+  font-size:13px;
   font-weight:800;
   line-height:1.15;
   word-break:break-word;
@@ -655,32 +685,34 @@ button{
 .trackMeta{
   margin-top:6px;
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
+  line-height:1.25;
 }
 
 .trackActions{
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:flex-end;
+  gap:6px;
 }
 
 .trackLoadBtn,
 .trackFavBtn{
-  width:38px;
-  height:38px;
-  border-radius:12px;
+  width:32px;
+  height:32px;
+  border-radius:10px;
   display:grid;
   place-items:center;
   background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.09);
   font-weight:900;
-  font-size:18px;
+  font-size:16px;
 }
 
 .trackFavBtn.active{
   color:#ffd86b;
-  box-shadow:0 0 24px rgba(255,216,107,.18);
-  border-color:rgba(255,216,107,.28);
+  box-shadow:0 0 18px rgba(255,216,107,.12);
+  border-color:rgba(255,216,107,.22);
 }
 
 .emptyState{
@@ -689,6 +721,7 @@ button{
   background:rgba(255,255,255,.04);
   color:var(--muted);
   border:1px solid rgba(255,255,255,.06);
+  grid-column:1 / -1;
 }
 
 ::-webkit-scrollbar{
@@ -709,12 +742,12 @@ button{
 
 @media (max-width: 1360px){
   :root{
-    --leftCol: 380px;
+    --leftCol: 390px;
     --sectionMaxH: 360px;
   }
 
-  .libraryGrid{
-    grid-template-columns:1fr;
+  .trackList{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -735,6 +768,14 @@ button{
 
   .libraryPanel{
     order:2;
+  }
+
+  .libraryGrid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "mal"
+      "utvisning"
+      "avbrott";
   }
 
   .spotifyWrap iframe{
