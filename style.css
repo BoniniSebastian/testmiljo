@@ -557,7 +557,7 @@ button{
 
 .goalHornRound::before{
   background:
-    radial-gradient(circle, rgba(255,92,107,.45) 0%, rgba(255,92,107,.10) 45%, transparent 70%);
+    radial-gradient(circle, rgba(73,217,255,.60) 0%, rgba(143,123,255,.25) 45%, transparent 70%);
 }
 
 .goalComboRound::before{
