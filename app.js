@@ -7,21 +7,12 @@ const PAUSE_FADE_OUT_MS = 700;
 const STOP_FADE_OUT_MS = 340;
 
 const STORAGE_KEYS = {
-  preload: "sb_v7_preload_track",
-  favorites: "sb_v7_avbrott_favorites",
-  cache: "sb_v7_library_cache"
+  preload: "sb_v8_preload_track",
+  favorites: "sb_v8_avbrott_favorites",
+  cache: "sb_v8_library_cache"
 };
 
 const MAIN_CATEGORIES = [
-  {
-    key: "utvisning",
-    label: "UTVISNING",
-    folder: "sounds/utvisning",
-    allowRandom: true,
-    allowLoad: true,
-    allowFavorite: false,
-    shortcut: "U"
-  },
   {
     key: "mal",
     label: "MÅL",
@@ -32,6 +23,15 @@ const MAIN_CATEGORIES = [
     shortcut: "M"
   },
   {
+    key: "utvisning",
+    label: "UTVISNING",
+    folder: "sounds/utvisning",
+    allowRandom: true,
+    allowLoad: true,
+    allowFavorite: false,
+    shortcut: "U"
+  },
+  {
     key: "avbrott",
     label: "AVBROTT",
     folder: "sounds/avbrott",
@@ -39,18 +39,17 @@ const MAIN_CATEGORIES = [
     allowLoad: true,
     allowFavorite: true,
     shortcut: "A"
+  },
+  {
+    key: "tuta",
+    label: "SOUNDS",
+    folder: "sounds/tuta",
+    allowRandom: true,
+    allowLoad: true,
+    allowFavorite: false,
+    shortcut: "S"
   }
 ];
-
-const SOUNDS_CATEGORY = {
-  key: "tuta",
-  label: "SOUNDS",
-  folder: "sounds/tuta",
-  allowRandom: true,
-  allowLoad: true,
-  allowFavorite: false,
-  shortcut: "S"
-};
 
 const AUDIO_EXT = ["mp3", "m4a", "wav", "ogg", "aac"];
 
@@ -64,18 +63,19 @@ const state = {
   hornAudios: [],
   comboTimeout: null,
   uiInterval: null,
-  goalHornCache: null
+  goalHornCache: null,
+  lastRandomByCategory: new Map()
 };
 
-const utvisningList = document.getElementById("utvisningList");
 const malList = document.getElementById("malList");
+const utvisningList = document.getElementById("utvisningList");
 const avbrottList = document.getElementById("avbrottList");
 const soundsList = document.getElementById("soundsList");
 
-const soundsRandomBtn = document.getElementById("soundsRandomBtn");
-const utvisningRandomBtn = document.getElementById("utvisningRandomBtn");
 const malRandomBtn = document.getElementById("malRandomBtn");
+const utvisningRandomBtn = document.getElementById("utvisningRandomBtn");
 const avbrottRandomBtn = document.getElementById("avbrottRandomBtn");
+const soundsRandomBtn = document.getElementById("soundsRandomBtn");
 
 const nowPlayingTitle = document.getElementById("nowPlayingTitle");
 const circleTime = document.getElementById("circleTime");
@@ -87,11 +87,11 @@ const centerPlayPauseBtn = document.getElementById("centerPlayPauseBtn");
 const resumeBtn = document.getElementById("resumeBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const stopBtn = document.getElementById("stopBtn");
+const resetBtn = document.getElementById("resetBtn");
 const goalHornBtn = document.getElementById("goalHornBtn");
 const goalComboBtn = document.getElementById("goalComboBtn");
-const resetBtn = document.getElementById("resetBtn");
 const clearPreloadBtn = document.getElementById("clearPreloadBtn");
-const preloadTitle = document.getElementById("preloadTitle");
+const preloadTitleText = document.getElementById("preloadTitleText");
 const preloadBadge = document.getElementById("preloadBadge");
 const playerWheelBtn = document.getElementById("centerPlayPauseBtn");
 
@@ -99,8 +99,8 @@ init().catch(console.error);
 
 async function init() {
   restoreLocalState();
-  bindControls();
   restoreLibraryCache();
+  bindControls();
   renderAllSections();
   renderPreload();
   syncPlayerUI();
@@ -143,7 +143,6 @@ function restoreLibraryCache() {
     if (!raw) return;
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return;
-
     for (const [key, files] of Object.entries(parsed)) {
       if (Array.isArray(files)) {
         state.library.set(key, files);
@@ -154,17 +153,14 @@ function restoreLibraryCache() {
 
 function persistLibraryCache() {
   try {
-    const obj = {};
-    for (const [key, files] of state.library.entries()) {
-      obj[key] = files;
-    }
-    localStorage.setItem(STORAGE_KEYS.cache, JSON.stringify(obj));
+    const out = {};
+    for (const [key, files] of state.library.entries()) out[key] = files;
+    localStorage.setItem(STORAGE_KEYS.cache, JSON.stringify(out));
   } catch {}
 }
 
 async function loadAllFolders() {
-  const all = [...MAIN_CATEGORIES, SOUNDS_CATEGORY];
-  await Promise.all(all.map(cat => loadFolder(cat)));
+  await Promise.all(MAIN_CATEGORIES.map(cat => loadFolder(cat)));
   await loadGoalHornCache();
   persistLibraryCache();
 }
@@ -192,10 +188,7 @@ async function loadFolder(category) {
 
     if (files.length) {
       state.library.set(category.key, files);
-      return;
-    }
-
-    if (!state.library.has(category.key)) {
+    } else if (!state.library.has(category.key)) {
       state.library.set(category.key, []);
     }
   } catch (err) {
@@ -229,15 +222,16 @@ function bindControls() {
   resumeBtn.onclick = () => resumeMusic();
   pauseBtn.onclick = () => pauseMusic();
   stopBtn.onclick = () => stopAll();
+  resetBtn.onclick = () => resetStoredState();
+
   goalHornBtn.onclick = () => playGoalHorn();
   goalComboBtn.onclick = () => playGoalCombo();
-  resetBtn.onclick = () => resetStoredState();
   clearPreloadBtn.onclick = () => clearPreload();
 
-  soundsRandomBtn.onclick = () => playRandomFromCategory("tuta");
-  utvisningRandomBtn.onclick = () => playRandomFromCategory("utvisning");
   malRandomBtn.onclick = () => playRandomFromCategory("mal");
+  utvisningRandomBtn.onclick = () => playRandomFromCategory("utvisning");
   avbrottRandomBtn.onclick = () => playRandomFromCategory("avbrott");
+  soundsRandomBtn.onclick = () => playRandomFromCategory("tuta");
 
   document.addEventListener("keydown", (e) => {
     const key = e.key.toLowerCase();
@@ -247,30 +241,37 @@ function bindControls() {
       toggleMusicPauseResume();
       return;
     }
+
     if (key === "escape") {
       stopAll();
       return;
     }
+
     if (key === "g") {
       playGoalHorn();
       return;
     }
+
     if (key === "c") {
       playGoalCombo();
       return;
     }
+
     if (key === "a") {
       playRandomFromCategory("avbrott");
       return;
     }
+
     if (key === "u") {
       playRandomFromCategory("utvisning");
       return;
     }
+
     if (key === "m") {
       playRandomFromCategory("mal");
       return;
     }
+
     if (key === "s") {
       playRandomFromCategory("tuta");
     }
@@ -278,8 +279,8 @@ function bindControls() {
 }
 
 function renderAllSections() {
-  renderCategoryToList("utvisning", utvisningList, { allowLoad: true, allowFavorite: false });
   renderCategoryToList("mal", malList, { allowLoad: true, allowFavorite: false });
+  renderCategoryToList("utvisning", utvisningList, { allowLoad: true, allowFavorite: false });
   renderCategoryToList("avbrott", avbrottList, { allowLoad: true, allowFavorite: true });
   renderCategoryToList("tuta", soundsList, { allowLoad: true, allowFavorite: false });
   markPlayingCards();
@@ -354,30 +355,6 @@ function createTrackCard(file, allowLoad, allowFavorite) {
   return card;
 }
 
-function markPlayingCards() {
-  document.querySelectorAll(".trackCard").forEach(card => {
-    card.classList.remove("playing");
-  });
-
-  if (!state.musicTrack) return;
-
-  const all = document.querySelectorAll(`.trackCard[data-track-id="${cssEscape(state.musicTrack.id)}"]`);
-  all.forEach(el => el.classList.add("playing"));
-}
-
-function renderPreload() {
-  if (!state.preloadTrack) {
-    preloadTitle.textContent = "Ingen låt laddad";
-    preloadBadge.textContent = "Tom";
-    preloadBadge.classList.remove("ready");
-    return;
-  }
-
-  preloadTitle.textContent = state.preloadTrack.name;
-  preloadBadge.textContent = "Redo";
-  preloadBadge.classList.add("ready");
-}
-
 function setPreload(track) {
   state.preloadTrack = {
     id: track.id,
@@ -397,6 +374,19 @@ function clearPreload() {
   renderPreload();
 }
 
+function renderPreload() {
+  if (!state.preloadTrack) {
+    preloadTitleText.textContent = "Ingen låt laddad";
+    preloadBadge.textContent = "Tom";
+    preloadBadge.classList.remove("ready");
+    return;
+  }
+
+  preloadTitleText.textContent = state.preloadTrack.name;
+  preloadBadge.textContent = "Redo";
+  preloadBadge.classList.add("ready");
+}
+
 function toggleFavorite(track) {
   if (state.avbrottFavorites.has(track.id)) {
     state.avbrottFavorites.delete(track.id);
@@ -408,10 +398,35 @@ function toggleFavorite(track) {
   markPlayingCards();
 }
 
+function weightedPickFromList(categoryKey, list) {
+  if (!list.length) return null;
+
+  const lastId = state.lastRandomByCategory.get(categoryKey);
+
+  let working = list.filter(item => item.id !== lastId);
+  if (!working.length) working = [...list];
+
+  if (categoryKey === "avbrott") {
+    const favs = working.filter(item => state.avbrottFavorites.has(item.id));
+    const nonFavs = working.filter(item => !state.avbrottFavorites.has(item.id));
+
+    if (favs.length && nonFavs.length) {
+      const favoredChance = 0.7;
+      working = Math.random() < favoredChance ? favs : nonFavs;
+    } else if (favs.length) {
+      working = favs;
+    }
+  }
+
+  const pick = working[Math.floor(Math.random() * working.length)];
+  if (pick) state.lastRandomByCategory.set(categoryKey, pick.id);
+  return pick;
+}
+
 function playRandomFromCategory(categoryKey) {
   const tracks = state.library.get(categoryKey) || [];
-  if (!tracks.length) return;
-  const pick = tracks[Math.floor(Math.random() * tracks.length)];
+  const pick = weightedPickFromList(categoryKey, tracks);
+  if (!pick) return;
   playTrack(pick, { fadeIn: true });
 }
 
@@ -558,6 +573,7 @@ function stopAllHorns() {
 function resetStoredState() {
   state.preloadTrack = null;
   state.avbrottFavorites.clear();
+  state.lastRandomByCategory.clear();
   persistPreload();
   persistFavorites();
   renderPreload();
@@ -742,6 +758,17 @@ function syncPlayerUI() {
     visualizer.classList.add("playing");
     playerWheelBtn.classList.add("playing");
   }
+}
+
+function markPlayingCards() {
+  document.querySelectorAll(".trackCard").forEach(card => {
+    card.classList.remove("playing");
+  });
+
+  if (!state.musicTrack) return;
+
+  const all = document.querySelectorAll(`.trackCard[data-track-id="${cssEscape(state.musicTrack.id)}"]`);
+  all.forEach(el => el.classList.add("playing"));
 }
 
 function isAudio(name) {
