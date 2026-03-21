@@ -58,33 +58,76 @@ body::before{
 
 .bgEq{
   position:fixed;
-  inset:auto 0 0 0;
-  height:72vh;
+  left:0;
+  right:0;
+  bottom:0;
+
+  width:100vw;
+  height:78vh;
+
   display:flex;
   align-items:flex-end;
-  justify-content:center;
-  gap:10px;
-  padding:0 4vw 2vh;
+  justify-content:space-between;
+
+  gap:0;
+  padding:0 0 2vh;
+
   pointer-events:none;
   z-index:0;
-  opacity:.18;
-  filter:blur(10px);
-  mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 18%, rgba(0,0,0,.9) 62%, rgba(0,0,0,1) 100%);
-  -webkit-mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 18%, rgba(0,0,0,.9) 62%, rgba(0,0,0,1) 100%);
+
+  opacity:.16;
+  filter:blur(12px);
+
+  mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 20%, rgba(0,0,0,.9) 65%, rgba(0,0,0,1) 100%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 20%, rgba(0,0,0,.9) 65%, rgba(0,0,0,1) 100%);
 }
 
 .bgEq span{
-  flex:1 1 auto;
-  max-width:32px;
-  min-width:10px;
+  flex:1;
+  min-width:6px;
+  max-width:none;
+
   border-radius:999px 999px 0 0;
   transform-origin:bottom center;
-  background:linear-gradient(180deg, var(--cyan2), var(--pink), var(--orange));
+
+  background:linear-gradient(180deg,
+    #8be8ff 0%,
+    #49d9ff 30%,
+    #8f7bff 60%,
+    #ff4f9a 100%
+  );
+
   box-shadow:
-    0 0 18px rgba(73,217,255,.18),
-    0 0 22px rgba(255,79,154,.14),
-    0 0 26px rgba(255,140,74,.10);
-  animation:bgEqMove 5.4s ease-in-out infinite;
+    0 0 22px rgba(73,217,255,.25),
+    0 0 28px rgba(143,123,255,.18),
+    0 0 34px rgba(255,79,154,.12);
+
+  animation:bgEqMove 5.2s ease-in-out infinite;
+}
+
+/* Variation för mer liv */
+.bgEq span:nth-child(3n){
+  background:linear-gradient(180deg,
+    #ffb36b,
+    #ff8c4a,
+    #ff4f9a
+  );
+}
+
+.bgEq span:nth-child(4n){
+  background:linear-gradient(180deg,
+    #8be8ff,
+    #8f7bff,
+    #ff7fbe
+  );
+}
+
+.bgEq span:nth-child(5n){
+  background:linear-gradient(180deg,
+    #49d9ff,
+    #57f3a1,
+    #8be8ff
+  );
 }
 
 .bgEq span:nth-child(4n){ background:linear-gradient(180deg, var(--cyan2), var(--violet), var(--pink)); }
