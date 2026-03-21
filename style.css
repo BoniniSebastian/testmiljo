@@ -390,7 +390,7 @@ button{
 
 .wheelActions{
   margin-top:10px;
-  display:grid;
+  display:none;
   grid-template-columns:repeat(4, auto);
   gap:8px;
   justify-content:center;
