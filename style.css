@@ -500,6 +500,37 @@ button{
   border-radius:18px;
   padding:12px;
 }
+.quickRandomRow{
+  display:none;
+}
+
+@media (max-width: 768px){
+  .quickRandomRow{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+    margin-top:10px;
+  }
+}
+
+.quickBtn{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:13px;
+  font-weight:800;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:all .15s ease;
+}
+
+.quickBtn:hover{
+  transform:translateY(-1px);
+  box-shadow:
+    0 0 12px rgba(73,217,255,.15),
+    0 0 18px rgba(255,79,154,.10);
+}
 
 .preloadTrackTop{
   display:flex;
