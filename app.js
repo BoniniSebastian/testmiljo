@@ -76,6 +76,7 @@ const malRandomBtn = document.getElementById("malRandomBtn");
 const utvisningRandomBtn = document.getElementById("utvisningRandomBtn");
 const avbrottRandomBtn = document.getElementById("avbrottRandomBtn");
 const soundsRandomBtn = document.getElementById("soundsRandomBtn");
+const musikList = document.getElementById("musikList");
 
 const nowPlayingTitle = document.getElementById("nowPlayingTitle");
 const circleTime = document.getElementById("circleTime");
