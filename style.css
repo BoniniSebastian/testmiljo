@@ -818,4 +818,16 @@ button{
       "sounds"
       "break";
   }
+  .musikGrid{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
+  margin-bottom:14px;
+  align-content:start;
 }
+
+.musikGrid .trackCard{
+  min-height:60px;
+}
+
