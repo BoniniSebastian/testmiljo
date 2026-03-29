@@ -310,6 +310,7 @@ function renderAllSections() {
   renderCategoryToList("utvisning", utvisningList, { allowLoad: false, allowFavorite: false });
   renderCategoryToList("avbrott", avbrottList, { allowLoad: false, allowFavorite: true });
   renderCategoryToList("tuta", soundsList, { allowLoad: false, allowFavorite: false });
+  renderCategoryToList("musik", musikList, { allowLoad: false, allowFavorite: false });
   markPlayingCards();
 }
 
