@@ -13,42 +13,42 @@ const STORAGE_KEYS = {
 };
 
 const MAIN_CATEGORIES = [
-  {
-    key: "mal",
-    label: "MÅL",
-    folder: "sounds/mal",
-    allowRandom: true,
-    allowLoad: true,
-    allowFavorite: false,
-    shortcut: "M"
-  },
-  {
-    key: "utvisning",
-    label: "UTVISNING",
-    folder: "sounds/utvisning",
-    allowRandom: true,
-    allowLoad: true,
-    allowFavorite: false,
-    shortcut: "U"
-  },
-  {
-    key: "avbrott",
-    label: "AVBROTT",
-    folder: "sounds/avbrott",
-    allowRandom: true,
-    allowLoad: true,
-    allowFavorite: true,
-    shortcut: "A"
-  },
-  {
-    key: "tuta",
-    label: "SOUNDS",
-    folder: "sounds/tuta",
-    allowRandom: true,
-    allowLoad: true,
-    allowFavorite: false,
-    shortcut: "S"
-  }
+  {{
+  key: "mal",
+  label: "MÅL",
+  folder: "sounds/mal",
+  allowRandom: true,
+  allowLoad: true,   // ✅ behåll
+  allowFavorite: false,
+  shortcut: "M"
+},
+{
+  key: "utvisning",
+  label: "UTVISNING",
+  folder: "sounds/utvisning",
+  allowRandom: true,
+  allowLoad: false,  // ❌ ändra
+  allowFavorite: false,
+  shortcut: "U"
+},
+{
+  key: "avbrott",
+  label: "AVBROTT",
+  folder: "sounds/avbrott",
+  allowRandom: true,
+  allowLoad: false,  // ❌ ändra
+  allowFavorite: true,
+  shortcut: "A"
+},
+{
+  key: "tuta",
+  label: "SOUNDS",
+  folder: "sounds/tuta",
+  allowRandom: true,
+  allowLoad: false,  // ❌ ändra
+  allowFavorite: false,
+  shortcut: "S"
+}
 ];
 
 const AUDIO_EXT = ["mp3", "m4a", "wav", "ogg", "aac"];
