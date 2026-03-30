@@ -387,18 +387,23 @@ function createTrackCard(file, allowLoad, allowFavorite) {
   }
 
   if (allowFavorite) {
-    const favBtn = document.createElement("button");
-    favBtn.type = "button";
-    favBtn.className = "trackFavBtn";
-    favBtn.title = "Favoritmarkera";
-    favBtn.textContent = "★";
-    if (state.avbrottFavorites.has(file.id)) favBtn.classList.add("active");
-    favBtn.onclick = (e) => {
-      e.stopPropagation();
-      toggleFavorite(file);
-    };
-    actions.appendChild(favBtn);
+  const favBtn = document.createElement("button");
+  favBtn.type = "button";
+  favBtn.className = "trackFavBtn";
+  favBtn.title = "Favoritmarkera";
+  favBtn.setAttribute("aria-label", "Favoritmarkera");
+
+  if (state.avbrottFavorites.has(file.id)) {
+    favBtn.classList.add("active");
   }
+
+  favBtn.onclick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(file);
+  };
+
+  actions.appendChild(favBtn);
+}
 
   card.appendChild(playBtn);
   if (actions.childElementCount) card.appendChild(actions);
